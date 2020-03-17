@@ -1,0 +1,128 @@
+author: mongoose-os
+description: A demo Mongoose OS firmware for C/C++
+version: 1.0
+
+libs_version: ${mos.version}
+modules_version: ${mos.version}
+mongoose_os_version: ${mos.version}
+
+platforms: [esp32, esp8266, stm32 ]
+
+tags:
+  - c
+
+sources:
+  - src
+
+filesystem:
+  - fs
+
+config_schema:
+#device_id
+  - ["device.id","LRT01"]
+#WiFi configuration
+  - ["wifi.ap.enable", true]
+  - ["wifi.ap.ssid", "LRT01"]
+  - ["wifi.ap.pass", "pass123#"]
+  - ["wifi.sta.enable", true]
+#  - ["wifi.sta.ssid", "DT_Jio"]
+#  - ["wifi.sta.pass", "Thingsiot#2"]
+#mqtt configuration
+  - ["mqtt.enable", true]
+#  - ["mqtt.client_id", "DTUARLOR001"]
+  - ["mqtt.user", "h52l0tXnYXFGkYpEEKGG"]
+  - ["mqtt.server", "demo.thingsboard.io:1883"]
+# application setting config
+  - ["app","o",{title:"APP.settings"}]
+  - ["app.ldr_gpio","i",{title:"LDR SENSOR"}]
+  - ["app.ldr_gpio",-1]
+  - ["app.ldr_enable", "b",{title:"ENABLE"}]
+  - ["app.ldr_enable",false]
+  - ["sys.esp32_adc_vref", "i", 1500, {title: "ADC Vref, in mV"}]
+  - ["app.src_id", "s", "LRT01",{title:"LoRa_Tx_id"}]
+  - ["app.dest_id", "s", "LRR01",{title:"LoRa_Rx_id1"}]
+  - ["app.receiver", "b", false, {title:"LoRa_Transmitter"}]
+#LoRa Configuraion
+  - ["lora", "o", {title: "LoRa Configuration"}]
+  - ["lora.frequency", "i", 865000000, {title:"LoRa_FREQUENCY"}]
+  - ["lora.dio0", "i", 32, {title: "Dio0 config"}]
+  - ["lora.reset", "i", 27, {title: "Reset Config"}]
+
+conds:
+  - when: mos.platform == "esp32"
+    apply:
+      config_schema:
+#SPI configuration
+        - ["spi.enable", true]
+        - ["spi.miso_gpio", 12]
+        - ["spi.mosi_gpio", 13]
+        - ["spi.sclk_gpio", 14]
+        - ["spi.cs0_gpio", 15]
+# Configuration for transmitter
+        - ["board.btn1.pin", 21]
+        - ["board.btn1.pull_up", true]
+        - ["board.btn2.pin", 22]
+        - ["board.btn2.pull_up", true]
+        - ["board.led1.pin", 4]
+        - ["app.status_led","i",{title: "Status LED"}]
+        - ["app.status_led", 2]
+# configuration for receiver
+        - ["board.led2.pin", -1]
+        - ["board.led3.pin", -1 ]
+ 
+  - when: mos.platform == "esp8266"
+    apply:
+      config_schema:
+#SPI configuration
+        - ["spi.enable", true]
+        - ["spi.miso_gpio", -1]
+        - ["spi.mosi_gpio", -1]
+        - ["spi.sclk_gpio", -1]
+        - ["spi.cs0_gpio", -1]
+# Configuration for transmitter
+        - ["board.btn1.pin", 21]
+        - ["board.btn1.pull_up", true]
+        - ["board.btn2.pin", 22]
+        - ["board.btn2.pull_up", true]
+        - ["board.led1.pin", -1]
+# configuration for receiver
+        - ["board.led2.pin", -1]
+        - ["board.led3.pin", -1 ]
+  
+  - when: mos.platform == "stm32"
+    apply:
+      config_schema:
+#SPI configuration
+        - ["spi.enable", true]
+        - ["spi.miso_gpio", -1]
+        - ["spi.mosi_gpio", -1]
+        - ["spi.sclk_gpio", -1]
+        - ["spi.cs0_gpio", -1]
+# Configuration for transmitter
+        - ["board.btn1.pin", -1]
+        - ["board.btn1.pull_up", true]
+        - ["board.btn2.pin", -1]
+        - ["board.btn2.pull_up", true]
+        - ["board.led1.pin", -1]
+# configuration for receiver
+        - ["board.led2.pin", -1]
+        - ["board.led3.pin", -1 ]
+
+
+
+libs:
+  - origin: https://github.com/mongoose-os-libs/boards
+  - origin: https://github.com/mongoose-os-libs/demo-bundle
+  - origin: https://github.com/mongoose-os-libs/rpc-service-gpio
+  - origin: https://github.com/mongoose-os-libs/rpc-service-config
+  - origin: https://github.com/mongoose-os-libs/rpc-service-fs
+  - origin: https://github.com/mongoose-os-libs/rpc-uart
+  - origin: https://github.com/mongoose-os-libs/mqtt
+  - origin: https://github.com/mongoose-os-libs/wifi-setup-web-ui
+  - origin: https://github.com/saikiran235/arduino-lora
+    version: master
+
+     
+
+# Used by the mos tool to catch mos binaries incompatible with this file format
+manifest_version: 2017-05-18
